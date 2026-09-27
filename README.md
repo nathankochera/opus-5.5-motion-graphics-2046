@@ -55,6 +55,25 @@ That rebuilds everything into `out/`: `2046_showreel.mp4` and `2046-showreel-pla
 - **Colours.** The palette is in `C` and `CHAPTERS` in `src/core.js`.
 - **Grain.** `REEL.OPTS.grain` controls it. The live player keeps animated grain on. The MP4 is rendered without grain (`#nograin`), because moving grain pushed the bitrate from about 7 to about 100 Mbps.
 
+## Instagram Reels cut
+
+`reels/` builds a 1080×1920 version for Instagram: a 4-second hook in the same type system, then the reel letterboxed between black bars.
+
+```
+./reels/build_reels.sh
+```
+
+That writes `out/reels/2046_reels_1080x1920.mp4` (30 fps, H.264 with AAC at 48 kHz) and a matching cover image, in about 4 minutes on 2 CPU cores.
+
+| Path | What it does |
+|---|---|
+| `reels/hook.js` | The hook: "No After Effects. No video model. No stock music. Just code, written by Claude." It ends with letterbox bars closing around a point of light, exactly where the reel's first spark appears. |
+| `reels/reels.html` | Compositor: draws the hook, then the reel scaled into the band between the bars. |
+| `reels/build_hook.py` | Bundles `src/core.js`, a slice of the reel's own source (the code that scrolls behind "Just code,"), and `hook.js` into `dist/hook.js`. |
+| `reels/hook_synth.py` | The hook's music on the reel's 120 BPM grid, built from the instruments in `synth.py`. It resolves into the reel's opening chord, lays the reel's score in at 4 s, and limits the whole program. |
+| `reels/render_reels.py`, `reels/encode_reels.sh` | Frame capture (1,020 frames) and the Instagram encode. |
+| `reels/preview_reels.py` | Contact sheet of any timestamps in the 9:16 cut, for example `python3 reels/preview_reels.py out/reels/sheet.png 1.0 3.0 12.0`. |
+
 ## License
 
 The code is MIT licensed (see `LICENSE`). The fonts in `fonts/` keep their own SIL Open Font License, included alongside them.
